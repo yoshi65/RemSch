@@ -30,7 +30,7 @@ done
 if test $num -eq 0; then
 	data=$original
 else
-	data=`echo $original | awk "NR <= $(($today_line+1)) || $num <= NR"`
+	data=`echo $original | awk "NR <= $(($today_line+1)) || $num < NR"`
 fi
 
 # delete extra notes

@@ -33,11 +33,12 @@ else
 	data=`echo $original | awk "NR <= $(($today_line+1)) || $num < NR"`
 fi
 
-# delete extra notes
+# delete extra contents
 del=(`echo $data | grep -n "\-\:\:" | sed -e 's/:.*//g'`)
 del_num=$((`echo $#del`/2))
 for i in `seq 0 $(($del_num-1))`
 do
 	data=`echo $data | awk "NR < $del[$((($del_num-i)*2-1))] || $del[$((($del_num-i)*2))] < NR"`
 done
+data=`echo $data | sed -e '/attendees/d'`
 echo $data

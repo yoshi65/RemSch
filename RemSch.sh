@@ -2,13 +2,36 @@
 
 # variable
 local -A today_sche_list
+local -A opthash
 local -a del
+local -a opt
 num=0
+NUM=1
 del_num=0
+opt=(-sd)
 time=`date +"%k%M"`
-original=`/usr/local/bin/icalBuddy -f -sd -nc eventsToday+1`
+error_message="usage: ./RemSch.sh [-f] [-nc] [-num NUM]\n\nShow the remaining schedule of today from icalBuddy(http://hasseg.org/icalBuddy/)\n\noptional arguments:\n  -f\t\tFormat output\n  -nc\t\tNo calendar names\n  -num NUM\tPrint events occurring between today and NUM days into the future"
+
+# check option
+zparseopts -D -A opthash -- f nc num:
+if [[ -n "$@" ]]; then
+	echo $error_message
+	exit 1
+fi
+if [[ -n "${opthash[(i)-f]}" ]]; then
+	opt=($opt -f)
+fi
+if [[ -n "${opthash[(i)-nc]}" ]]; then
+	opt=($opt -nc)
+fi
+if [[ -n "${opthash[(i)-num]}" ]]; then
+	NUM=${opthash[-num]}
+fi
+
+# get original data
+original=`icalBuddy $opt eventsToday+$NUM`
 today_line=`echo $original | grep -n "today" | sed -e 's/:.*//g'`
-tomorrow_line=`echo $original | grep -n "tomorrow" | sed -e 's/:.*//g'`
+tomorrow_line=`echo $original | grep -n "^tomorrow" | sed -e 's/:.*//g'`
 today_sche_list=(`echo $original | head -n $(($tomorrow_line-1)) | grep -n "\-.[0-9][0-9]:[0-9][0-9]" | awk '{print $1} {print $4}' | sed -e 's/:\([0-9][0-9]\).*/\1/g;s/:.*//g'`)
 
 # keep full time of today's schedule

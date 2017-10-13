@@ -44,7 +44,7 @@ done
 
 # get end time of today's schedule
 for key in ${(k)today_sche_list}; do
-	if test $today_sche_list[$key] -le $time; then
+	if [ $today_sche_list[$key] -le $time ] && [ $num -le $key ]; then
 		num=$key
 	fi
 done

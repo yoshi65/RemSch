@@ -32,6 +32,9 @@ fi
 original=`icalBuddy $opt eventsToday+$NUM`
 today_line=`echo $original | grep -n "today" | sed -e 's/:.*//g'`
 tomorrow_line=`echo $original | grep -n "^tomorrow" | sed -e 's/:.*//g'`
+if [[ $tomorrow_line == '' ]]; then
+    tomorrow_line=`echo $original | grep -n "^day\ after\ tomorrow" | sed -e 's/:.*//g'`
+fi
 today_sche_list=(`echo $original | head -n $(($tomorrow_line-1)) | grep -n "\-.[0-9][0-9]:[0-9][0-9]" | awk '{print $1} {print $4}' | sed -e 's/:\([0-9][0-9]\).*/\1/g;s/:.*//g'`)
 
 # keep full time of today's schedule

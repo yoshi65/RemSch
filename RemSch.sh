@@ -66,8 +66,7 @@ for i in `seq 0 $(($del_num-1))`
 do
 	data=`echo $data | awk "NR < $del[$((($del_num-i)*2-1))] || $del[$((($del_num-i)*2))] < NR"`
 done
-data=`echo $data | sed -e '/attendees/d'`
-data=`echo $data | sed -e '/... - .../d'`
+data=`echo $data | sed -e '/attendees/d;/... - .../d'`
 
 # display data
 echo $data

@@ -29,7 +29,7 @@ if [[ -n "${opthash[(i)-num]}" ]]; then
 fi
 
 # get original data
-original=`icalBuddy $opt eventsToday+$NUM`
+original=`icalBuddy $opt eventsToday+$NUM | sed -e '/\.\.\. - \.\.\./d'`
 today_line=`echo $original | grep -n "today" | sed -e 's/:.*//g'`
 tomorrow_line=`echo $original | grep -n "^tomorrow" | sed -e 's/:.*//g'`
 if [[ $tomorrow_line == '' ]]; then
@@ -56,7 +56,7 @@ done
 if test $num -eq 0; then
 	data=$original
 else
-	data=`echo $original | awk "NR <= $(($today_line+1)) || $num < NR"`
+	data=`echo $original | awk "NR <= $(($today_line)) || $num < NR"`
 fi
 
 # delete extra contents
@@ -66,7 +66,7 @@ for i in `seq 0 $(($del_num-1))`
 do
 	data=`echo $data | awk "NR < $del[$((($del_num-i)*2-1))] || $del[$((($del_num-i)*2))] < NR"`
 done
-data=`echo $data | sed -e '/attendees/d;/... - .../d'`
+data=`echo $data | sed -e '/attendees/d'`
 
 # display data
 echo $data

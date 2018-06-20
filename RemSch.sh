@@ -35,13 +35,13 @@ tomorrow_line=`echo $original | grep -n "^tomorrow" | sed -e 's/:.*//g'`
 if [[ $tomorrow_line == '' ]]; then
     tomorrow_line=`echo $original | grep -n "^day\ after\ tomorrow" | sed -e 's/:.*//g'`
 fi
-today_sche_list=(`echo $original | head -n $(($tomorrow_line-1)) | grep -n "\ [0-9]*:[0-9]*" | awk '{print $1} {print $4}' | sed -e 's/:\([0-9][0-9]\).*/\1/g;s/:.*//g'`)
+today_sche_list=(`echo $original | head -n $(($tomorrow_line-1)) | grep -n "\ [0-9]*:[0-9]*$" | awk '{print $1} {print $4}' | sed -e 's/:\([0-9][0-9]\).*/\1/g;s/:.*//g'`)
 
 # keep full time of today's schedule
 for i in `seq $(($today_line+2)) $(($tomorrow_line-1))`
 do
 	if [ `echo $original | awk "$i <= NR && NR <= $(($i+1))" | grep -c "•"` = 2 ] ; then
-		today_line=$i
+		today_line=$(($i - 1))
 	fi
 done
 
@@ -56,7 +56,7 @@ done
 if test $num -eq 0; then
 	data=$original
 else
-	data=`echo $original | awk "NR <= ${today_line} || $num < NR"`
+	data=`echo $original | awk "NR <= $(($today_line + 1)) || $num < NR"`
 fi
 
 # delete extra contents
